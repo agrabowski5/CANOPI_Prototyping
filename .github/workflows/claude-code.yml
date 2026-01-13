@@ -33,11 +33,17 @@ jobs:
 
       - name: SMS Notification - Starting
         run: |
-          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/${{ secrets.TWILIO_ACCOUNT_SID }}/Messages.json" \
-            -u "${{ secrets.TWILIO_ACCOUNT_SID }}:${{ secrets.TWILIO_AUTH_TOKEN }}" \
-            -d "From=${{ secrets.TWILIO_PHONE_NUMBER }}" \
-            -d "To=+17076900273" \
-            -d "Body=🤖 Claude Code starting work on: ${{ github.event.issue.title || github.event.pull_request.title }}"
+          # Send via AT&T email-to-SMS gateway
+          echo "Claude Code starting: ${{ github.event.issue.title || github.event.pull_request.title }}" | \
+          curl -s --url "smtps://smtp.gmail.com:465" \
+            --ssl-reqd \
+            --mail-from "${{ secrets.GMAIL_ADDRESS }}" \
+            --mail-rcpt "7076900273@txt.att.net" \
+            --user "${{ secrets.GMAIL_ADDRESS }}:${{ secrets.GMAIL_APP_PASSWORD }}" \
+            -T - \
+            -H "Subject: Claude Started" \
+            -H "From: ${{ secrets.GMAIL_ADDRESS }}" \
+            -H "To: 7076900273@txt.att.net"
         continue-on-error: true
 
       - name: Run Claude Code
@@ -95,15 +101,18 @@ jobs:
         run: |
           STATUS="${{ job.status }}"
           if [ "$STATUS" = "success" ]; then
-            MSG="✅ Claude Code COMPLETED: ${{ github.event.issue.title || github.event.pull_request.title }}"
+            MSG="DONE: ${{ github.event.issue.title || github.event.pull_request.title }}"
           else
-            MSG="❌ Claude Code FAILED: ${{ github.event.issue.title || github.event.pull_request.title }}"
+            MSG="FAILED: ${{ github.event.issue.title || github.event.pull_request.title }}"
           fi
-          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/${{ secrets.TWILIO_ACCOUNT_SID }}/Messages.json" \
-            -u "${{ secrets.TWILIO_ACCOUNT_SID }}:${{ secrets.TWILIO_AUTH_TOKEN }}" \
-            -d "From=${{ secrets.TWILIO_PHONE_NUMBER }}" \
-            -d "To=+17076900273" \
-            -d "Body=$MSG - View: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          # Send via AT&T email-to-SMS gateway
+          echo -e "Subject: Claude $STATUS\n\n$MSG" | \
+          curl -s --url "smtps://smtp.gmail.com:465" \
+            --ssl-reqd \
+            --mail-from "${{ secrets.GMAIL_ADDRESS }}" \
+            --mail-rcpt "7076900273@txt.att.net" \
+            --user "${{ secrets.GMAIL_ADDRESS }}:${{ secrets.GMAIL_APP_PASSWORD }}" \
+            -T -
         continue-on-error: true
 
       - name: Auto-commit changes
