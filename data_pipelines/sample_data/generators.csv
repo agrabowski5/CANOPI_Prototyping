@@ -1,0 +1,42 @@
+id,node_id,name,type,capacity_mw,capex_per_mw,opex_per_mw_year,carbon_intensity
+0,30,Diablo Canyon Nuclear,nuclear,2240,6500000,100000,0
+1,33,Four Corners Coal Plant,coal,1540,3800000,95000,950
+2,43,Navajo Generating Station,coal,2250,3800000,95000,950
+3,31,Moss Landing Gas Plant,gas,2560,1100000,25000,450
+4,32,Scattergood Gas Plant,gas,820,1100000,25000,450
+5,12,Palo Verde Nuclear,nuclear,3937,6500000,100000,0
+6,40,Bonneville Dam,hydro,1050,4200000,45000,0
+7,44,Glen Canyon Dam,hydro,1320,4200000,45000,0
+8,41,Rock Island Dam,hydro,660,4200000,45000,0
+9,42,American Falls Dam,hydro,92,4200000,45000,0
+10,34,Desert Southwest Solar,solar,550,1350000,18000,0
+11,35,Dry Lake Solar,solar,490,1350000,18000,0
+12,36,Coachella Valley Solar,solar,380,1350000,18000,0
+13,45,Owens Valley Solar,solar,210,1350000,18000,0
+14,37,Elk Grove Wind,wind,240,1600000,45000,0
+15,38,Wild Horse Wind,wind,273,1600000,45000,0
+16,39,Chokecherry Wind,wind,410,1600000,45000,0
+17,3,Tesla Combined Cycle,gas,1150,1100000,25000,450
+18,4,Metcalf Energy Center,gas,605,1100000,25000,450
+19,7,Sutter Energy Center,gas,530,1100000,25000,450
+20,13,Westwing Gas Plant,gas,1240,1100000,25000,450
+21,18,Mona Natural Gas,gas,890,1100000,25000,450
+22,20,Midpoint Gas Plant,gas,760,1100000,25000,450
+23,23,Monroe Gas Turbine,gas,420,1100000,25000,450
+24,21,John Day Hydro,hydro,2160,4200000,45000,0
+25,25,Grand Coulee Dam,hydro,6809,4200000,45000,0
+26,1,Rinaldi Peaker,gas,340,950000,22000,500
+27,6,Midway Peaker,gas,285,950000,22000,500
+28,10,McCullough Peaker,gas,310,950000,22000,500
+29,22,Ostrander Peaker,gas,265,950000,22000,500
+30,16,Comanche Coal Plant,coal,1320,3800000,95000,950
+31,0,Sylmar Solar Expansion,solar,0,1350000,18000,0
+32,2,Imperial Valley Solar,solar,0,1350000,18000,0
+33,5,Gates Solar Farm,solar,0,1350000,18000,0
+34,8,Cottonwood Wind,wind,0,1600000,45000,0
+35,17,Fort St Vrain Gas,gas,0,1100000,25000,450
+36,19,Terminal Combined Cycle,gas,0,1100000,25000,450
+37,24,Raver Wind Farm,wind,0,1600000,45000,0
+38,26,Garrison Hydro Upgrade,hydro,0,4200000,45000,0
+39,14,Saguaro Battery Storage,storage,0,1500000,25000,0
+40,11,Eldorado Battery Storage,storage,0,1500000,25000,0

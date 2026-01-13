@@ -1,0 +1,39 @@
+{
+  "total_lines": 10449,
+  "total_length_km": 298703.23,
+  "by_country": {
+    "USA": {
+      "count": 10449,
+      "length_km": 298703.22999999917,
+      "capacity_mw": 6872545.0
+    }
+  },
+  "by_voltage_class": {
+    "220-287": {
+      "count": 7064,
+      "length_km": 141496.3599999996
+    },
+    "345": {
+      "count": 2536,
+      "length_km": 104963.30000000009
+    },
+    "500": {
+      "count": 795,
+      "length_km": 45918.03999999996
+    },
+    "735 AND ABOVE": {
+      "count": 46,
+      "length_km": 3878.210000000001
+    },
+    "DC": {
+      "count": 8,
+      "length_km": 2447.32
+    }
+  },
+  "by_status": {
+    "operational": 8078,
+    "not available": 2362,
+    "inactive": 8,
+    "under construction": 1
+  }
+}

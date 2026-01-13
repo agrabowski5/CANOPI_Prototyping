@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with PostGIS for spatial data
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: canopi_postgres_prod
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-canopi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-canopi_prod_password}
+      POSTGRES_DB: ${POSTGRES_DB:-canopi}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-canopi}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis for caching and Celery message broker
+  redis:
+    image: redis:7-alpine
+    container_name: canopi_redis_prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend FastAPI application
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: canopi_backend_prod
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-canopi}:${POSTGRES_PASSWORD:-canopi_prod_password}@postgres:5432/${POSTGRES_DB:-canopi}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - ENVIRONMENT=production
+      - LOG_LEVEL=info
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/app:/app/app
+      - ./data_pipelines:/app/data_pipelines
+      - ./canopi_engine:/app/canopi_engine
+    restart: unless-stopped
+
+  # Celery worker for async optimization tasks
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: canopi_celery_worker_prod
+    command: celery -A app.workers.optimization_worker worker --loglevel=info --concurrency=2
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-canopi}:${POSTGRES_PASSWORD:-canopi_prod_password}@postgres:5432/${POSTGRES_DB:-canopi}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - ENVIRONMENT=production
+    depends_on:
+      - postgres
+      - redis
+      - backend
+    volumes:
+      - ./backend/app:/app/app
+      - ./data_pipelines:/app/data_pipelines
+      - ./canopi_engine:/app/canopi_engine
+    restart: unless-stopped
+
+  # Flower for Celery monitoring
+  flower:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: canopi_flower_prod
+    command: celery -A app.workers.optimization_worker flower --port=5555
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery_worker
+    restart: unless-stopped
+
+  # Frontend React application with Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_BASE_URL=/api
+        - REACT_APP_MAPBOX_TOKEN=pk.eyJ1IjoiYWdyYWJvd3MiLCJhIjoiY205MXBkaTEyMDNobjJzcHdyNjczOHY1ZiJ9.YUk31iaej90fE7REWALCLQ
+    container_name: canopi_frontend_prod
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  default:
+    name: canopi_network_prod

@@ -1,0 +1,56 @@
+id,name,latitude,longitude,voltage_kv,iso_rto,type
+0,Los Angeles - Sylmar,34.308,-118.437,500,CAISO,substation
+1,Los Angeles - Rinaldi,34.290,-118.515,500,CAISO,substation
+2,San Diego - Imperial Valley,32.716,-115.559,500,CAISO,substation
+3,San Francisco - Tesla,37.565,-121.433,500,CAISO,substation
+4,San Jose - Metcalf,37.288,-121.850,500,CAISO,substation
+5,Fresno - Gates,36.746,-119.716,500,CAISO,substation
+6,Bakersfield - Midway,35.373,-119.019,500,CAISO,substation
+7,Sacramento - Captain Jack,38.581,-121.494,500,CAISO,substation
+8,Redding - Cottonwood,40.384,-122.335,500,CAISO,substation
+9,Reno - Tracy,39.529,-119.814,345,WECC,substation
+10,Las Vegas - McCullough,35.896,-114.984,500,WECC,substation
+11,Las Vegas - Eldorado,35.945,-114.760,345,WECC,substation
+12,Phoenix - Palo Verde,33.389,-112.866,500,WECC,substation
+13,Phoenix - Westwing,33.448,-112.074,500,WECC,substation
+14,Tucson - Saguaro,32.221,-110.926,345,WECC,substation
+15,Albuquerque - Rio Grande,35.084,-106.649,345,WECC,substation
+16,Denver - Comanche,38.238,-104.591,345,WECC,substation
+17,Denver - Fort St. Vrain,40.245,-104.912,345,WECC,substation
+18,Salt Lake City - Mona,39.810,-111.851,500,WECC,substation
+19,Salt Lake City - Terminal,40.760,-111.891,345,WECC,substation
+20,Boise - Midpoint,43.614,-116.204,500,WECC,substation
+21,Portland - John Day,44.454,-118.953,500,WECC,substation
+22,Portland - Ostrander,45.726,-122.573,500,WECC,substation
+23,Seattle - Monroe,47.859,-121.970,500,WECC,substation
+24,Seattle - Raver,47.123,-119.021,500,WECC,substation
+25,Spokane - Grand Coulee,47.955,-118.983,500,WECC,substation
+26,Missoula - Garrison,46.862,-112.826,230,WECC,substation
+27,Billings - Colstrip,45.783,-106.617,500,WECC,substation
+28,Casper - Dave Johnston,42.866,-105.375,230,WECC,substation
+29,Cheyenne - Ault,40.585,-104.730,230,WECC,substation
+30,San Luis Obispo - Diablo Canyon,35.211,-120.853,500,CAISO,nuclear
+31,Palo Alto - Moss Landing,36.804,-121.764,345,CAISO,gas
+32,Los Angeles - Scattergood,33.923,-118.451,230,CAISO,gas
+33,San Bernardino - Four Corners,36.994,-108.487,345,WECC,coal
+34,Yuma - Desert Southwest,32.693,-114.624,230,WECC,solar
+35,Las Vegas - Dry Lake,36.641,-114.949,345,WECC,solar
+36,Palm Springs - Coachella Valley,33.660,-116.174,230,CAISO,solar
+37,Sacramento - Elk Grove,38.408,-121.371,230,CAISO,wind
+38,Ellensburg - Wild Horse,46.997,-119.896,230,WECC,wind
+39,Wyoming - Chokecherry,41.743,-107.546,230,WECC,wind
+40,Portland - Bonneville Dam,45.644,-121.941,500,WECC,hydro
+41,Wenatchee - Rock Island Dam,47.377,-120.089,230,WECC,hydro
+42,Idaho Falls - American Falls Dam,42.782,-112.850,230,WECC,hydro
+43,Flagstaff - Navajo,36.912,-111.411,345,WECC,coal
+44,Page - Glen Canyon Dam,36.937,-111.484,345,WECC,hydro
+45,Bishop - Owens Valley,37.364,-118.395,230,CAISO,solar
+46,Eureka - Humboldt Bay,40.802,-124.163,230,CAISO,load_center
+47,Medford - Rogue Valley,42.326,-122.875,230,WECC,load_center
+48,Eugene - Willamette,44.052,-123.087,230,WECC,load_center
+49,Bend - Central Oregon,44.058,-121.315,230,WECC,load_center
+50,Bozeman - Montana Central,45.677,-111.037,230,WECC,load_center
+51,Santa Barbara - Central Coast,34.421,-119.698,230,CAISO,load_center
+52,Monterey - Moss Landing Coastal,36.683,-121.787,230,CAISO,load_center
+53,Riverside - Inland Empire,33.953,-117.396,230,CAISO,load_center
+54,Orange County - Irvine,33.684,-117.826,230,CAISO,load_center

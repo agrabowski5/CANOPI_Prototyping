@@ -1,0 +1,1 @@
+"""CANOPI Energy Planning Platform - Backend Application"""

@@ -1,0 +1,42 @@
+generator_id,name,type,fuel_cost_per_mwh,vom_cost_per_mwh,total_marginal_cost_per_mwh
+0,Diablo Canyon Nuclear,nuclear,8.50,2.50,11.00
+1,Four Corners Coal Plant,coal,25.00,8.50,33.50
+2,Navajo Generating Station,coal,24.50,9.00,33.50
+3,Moss Landing Gas Plant,gas,42.00,3.50,45.50
+4,Scattergood Gas Plant,gas,43.50,3.50,47.00
+5,Palo Verde Nuclear,nuclear,8.00,2.80,10.80
+6,Bonneville Dam,hydro,0.00,2.00,2.00
+7,Glen Canyon Dam,hydro,0.00,2.20,2.20
+8,Rock Island Dam,hydro,0.00,2.10,2.10
+9,American Falls Dam,hydro,0.00,2.50,2.50
+10,Desert Southwest Solar,solar,0.00,0.00,0.00
+11,Dry Lake Solar,solar,0.00,0.00,0.00
+12,Coachella Valley Solar,solar,0.00,0.00,0.00
+13,Owens Valley Solar,solar,0.00,0.00,0.00
+14,Elk Grove Wind,wind,0.00,0.00,0.00
+15,Wild Horse Wind,wind,0.00,0.00,0.00
+16,Chokecherry Wind,wind,0.00,0.00,0.00
+17,Tesla Combined Cycle,gas,40.50,3.20,43.70
+18,Metcalf Energy Center,gas,41.20,3.30,44.50
+19,Sutter Energy Center,gas,42.50,3.40,45.90
+20,Westwing Gas Plant,gas,44.00,3.50,47.50
+21,Mona Natural Gas,gas,43.00,3.60,46.60
+22,Midpoint Gas Plant,gas,42.80,3.50,46.30
+23,Monroe Gas Turbine,gas,45.50,4.00,49.50
+24,John Day Hydro,hydro,0.00,1.80,1.80
+25,Grand Coulee Dam,hydro,0.00,1.90,1.90
+26,Rinaldi Peaker,gas,52.00,5.50,57.50
+27,Midway Peaker,gas,53.50,5.80,59.30
+28,McCullough Peaker,gas,51.50,5.50,57.00
+29,Ostrander Peaker,gas,54.00,5.70,59.70
+30,Comanche Coal Plant,coal,26.00,8.00,34.00
+31,Sylmar Solar Expansion,solar,0.00,0.00,0.00
+32,Imperial Valley Solar,solar,0.00,0.00,0.00
+33,Gates Solar Farm,solar,0.00,0.00,0.00
+34,Cottonwood Wind,wind,0.00,0.00,0.00
+35,Fort St Vrain Gas,gas,41.00,3.30,44.30
+36,Terminal Combined Cycle,gas,42.30,3.40,45.70
+37,Raver Wind Farm,wind,0.00,0.00,0.00
+38,Garrison Hydro Upgrade,hydro,0.00,2.30,2.30
+39,Saguaro Battery Storage,storage,0.00,1.50,1.50
+40,Eldorado Battery Storage,storage,0.00,1.50,1.50

@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with PostGIS for spatial data
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: canopi_postgres
+    environment:
+      POSTGRES_USER: canopi
+      POSTGRES_PASSWORD: canopi_dev_password
+      POSTGRES_DB: canopi
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U canopi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and Celery message broker
+  redis:
+    image: redis:7-alpine
+    container_name: canopi_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # TimescaleDB for time-series data (LMP prices, weather)
+  timescaledb:
+    image: timescale/timescaledb:latest-pg15
+    container_name: canopi_timescaledb
+    environment:
+      POSTGRES_USER: timescale
+      POSTGRES_PASSWORD: timescale_dev_password
+      POSTGRES_DB: timescale
+    ports:
+      - "5433:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U timescale"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PgAdmin for database management (optional, for development)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: canopi_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@canopi.energy
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+  redis_data:
+  timescale_data:
+
+networks:
+  default:
+    name: canopi_network
