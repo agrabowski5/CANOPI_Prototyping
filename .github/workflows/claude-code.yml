@@ -1,0 +1,68 @@
+name: Claude Code Assistant
+
+on:
+  issues:
+    types: [opened, labeled]
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [opened, labeled]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  claude-code:
+    # Trigger on 'claude' label or when @claude is mentioned in comments
+    if: |
+      (github.event.label.name == 'claude') ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # Run in dangerously skip permissions mode - no approval needed
+          allowedTools: |
+            Bash
+            Glob
+            Grep
+            Read
+            Edit
+            Write
+            WebFetch
+            WebSearch
+            TodoWrite
+
+          # Auto-approve all tool calls
+          direct_prompt: |
+            You are helping with the CANOPI Energy Planning Platform.
+
+            This is a full-stack application with:
+            - React/TypeScript frontend (in /frontend)
+            - FastAPI Python backend (in /backend)
+            - Mapbox GL for map visualization
+            - Grid topology and transmission network data
+
+            When implementing features:
+            1. Follow existing code patterns and conventions
+            2. Use TypeScript for frontend code
+            3. Use Python type hints for backend code
+            4. Test your changes work before committing
+            5. Create focused, well-documented commits
+
+            Execute all necessary tool calls without asking for permission.
