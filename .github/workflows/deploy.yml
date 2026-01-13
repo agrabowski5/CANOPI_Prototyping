@@ -1,0 +1,45 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy Backend
+        run: railway up --service backend
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy Frontend
+        run: railway up --service frontend
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: SMS Notification
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          if [ "$STATUS" = "success" ]; then
+            MSG="Deployed to Railway successfully"
+          else
+            MSG="Railway deployment FAILED"
+          fi
+          echo -e "Subject: Deploy $STATUS\n\n$MSG" | \
+          curl -s --url "smtps://smtp.gmail.com:465" \
+            --ssl-reqd \
+            --mail-from "${{ secrets.GMAIL_ADDRESS }}" \
+            --mail-rcpt "7076900273@txt.att.net" \
+            --user "${{ secrets.GMAIL_ADDRESS }}:${{ secrets.GMAIL_APP_PASSWORD }}" \
+            -T -
+        continue-on-error: true
