@@ -40,6 +40,16 @@ async def startup_event():
     """Initialize services on application startup"""
     logger.info("Starting CANOPI Energy Planning Platform API")
 
+    # Set Gurobi license file location
+    import os
+    from pathlib import Path
+    gurobi_license = Path.home() / "OneDrive" / "gurobi.lic"
+    if gurobi_license.exists():
+        os.environ['GRB_LICENSE_FILE'] = str(gurobi_license)
+        logger.info(f"✓ Gurobi license found at {gurobi_license}")
+    else:
+        logger.warning("⚠ Gurobi license not found - optimization will use mock data")
+
     # Initialize grid data service with sample data
     try:
         from app.services.grid_data_memory import get_grid_service
