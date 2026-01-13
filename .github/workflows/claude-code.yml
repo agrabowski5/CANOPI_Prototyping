@@ -1,29 +1,29 @@
-name: Claude Code Assistant
+name: Claude Code
 
 on:
-  issues:
-    types: [opened, labeled]
   issue_comment:
     types: [created]
-  pull_request:
-    types: [opened, labeled]
   pull_request_review_comment:
     types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
 
 jobs:
-  claude-code:
-    # Trigger on 'claude' label or when @claude is mentioned in comments
+  claude:
     if: |
-      (github.event.label.name == 'claude') ||
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
-
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
-      issues: write
       pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
 
     steps:
       - name: Checkout repository
@@ -34,79 +34,8 @@ jobs:
       - name: SMS Notification - Starting
         run: |
           # Send via AT&T email-to-SMS gateway
-          echo "Claude Code starting: ${{ github.event.issue.title || github.event.pull_request.title }}" | \
-          curl -s --url "smtps://smtp.gmail.com:465" \
-            --ssl-reqd \
-            --mail-from "${{ secrets.GMAIL_ADDRESS }}" \
-            --mail-rcpt "7076900273@txt.att.net" \
-            --user "${{ secrets.GMAIL_ADDRESS }}:${{ secrets.GMAIL_APP_PASSWORD }}" \
-            -T - \
-            -H "Subject: Claude Started" \
-            -H "From: ${{ secrets.GMAIL_ADDRESS }}" \
-            -H "To: 7076900273@txt.att.net"
-        continue-on-error: true
-
-      - name: Run Claude Code
-        id: claude
-        uses: anthropics/claude-code-action@beta
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-
-          # Use max mode for autonomous operation
-          model: claude-sonnet-4-20250514
-
-          # Allow all tools - fully autonomous
-          allowedTools: |
-            Bash
-            Glob
-            Grep
-            Read
-            Edit
-            Write
-            WebFetch
-            WebSearch
-            TodoWrite
-            Task
-
-          # Direct prompt for autonomous execution
-          direct_prompt: |
-            You are an autonomous coding assistant for the CANOPI Energy Planning Platform.
-
-            IMPORTANT: Execute ALL tasks without asking for permission or confirmation.
-
-            This is a full-stack application with:
-            - React/TypeScript frontend (in /frontend)
-            - FastAPI Python backend (in /backend)
-            - Mapbox GL for map visualization
-            - Grid topology and transmission network data
-
-            Your workflow:
-            1. Read and understand the issue/request completely
-            2. Explore the codebase to understand the context
-            3. Plan your implementation
-            4. Implement the changes
-            5. Run builds/tests to verify (npm run build, pytest, etc.)
-            6. Commit all changes with descriptive messages
-            7. Create a PR if working on a branch
-
-            Rules:
-            - NEVER ask for clarification - make reasonable assumptions
-            - ALWAYS commit your changes
-            - ALWAYS run the build to verify changes compile
-            - Use existing code patterns and conventions
-            - Be thorough but efficient
-
-      - name: SMS Notification - Completed
-        if: always()
-        run: |
-          STATUS="${{ job.status }}"
-          if [ "$STATUS" = "success" ]; then
-            MSG="DONE: ${{ github.event.issue.title || github.event.pull_request.title }}"
-          else
-            MSG="FAILED: ${{ github.event.issue.title || github.event.pull_request.title }}"
-          fi
-          # Send via AT&T email-to-SMS gateway
-          echo -e "Subject: Claude $STATUS\n\n$MSG" | \
+          TITLE="${{ github.event.issue.title || github.event.pull_request.title || 'Claude task' }}"
+          echo -e "Subject: Claude Started\n\nStarting: $TITLE" | \
           curl -s --url "smtps://smtp.gmail.com:465" \
             --ssl-reqd \
             --mail-from "${{ secrets.GMAIL_ADDRESS }}" \
@@ -115,19 +44,35 @@ jobs:
             -T -
         continue-on-error: true
 
-      - name: Auto-commit changes
+      - name: Run Claude Code
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # Use CLI args for configuration
+          claude_args: |
+            --model claude-sonnet-4-20250514
+            --max-turns 50
+            --dangerously-skip-permissions
+            --allowedTools "Bash,Glob,Grep,Read,Edit,Write,Task"
+            --system-prompt "You are an autonomous coding assistant for the CANOPI Energy Planning Platform. This is a full-stack application with React/TypeScript frontend (in /frontend), FastAPI Python backend (in /backend), Mapbox GL for map visualization, and grid topology/transmission network data. Execute ALL tasks without asking for permission. Make reasonable assumptions. Always commit your changes. Always run builds to verify."
+
+      - name: SMS Notification - Completed
+        if: always()
         run: |
-          git config user.name "Claude Code Bot"
-          git config user.email "claude-bot@users.noreply.github.com"
-          git add -A
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
+          STATUS="${{ job.status }}"
+          TITLE="${{ github.event.issue.title || github.event.pull_request.title || 'Claude task' }}"
+          if [ "$STATUS" = "success" ]; then
+            MSG="DONE: $TITLE"
           else
-            git commit -m "Auto-commit from Claude Code Action
-
-            Issue: ${{ github.event.issue.title || github.event.pull_request.title }}
-
-            Co-Authored-By: Claude <noreply@anthropic.com>"
-            git push
+            MSG="FAILED: $TITLE"
           fi
+          echo -e "Subject: Claude $STATUS\n\n$MSG" | \
+          curl -s --url "smtps://smtp.gmail.com:465" \
+            --ssl-reqd \
+            --mail-from "${{ secrets.GMAIL_ADDRESS }}" \
+            --mail-rcpt "7076900273@txt.att.net" \
+            --user "${{ secrets.GMAIL_ADDRESS }}:${{ secrets.GMAIL_APP_PASSWORD }}" \
+            -T -
         continue-on-error: true
