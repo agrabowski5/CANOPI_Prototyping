@@ -2,6 +2,7 @@
   "name": "canopi-frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://agrabowski5.github.io/CANOPI_Prototyping",
   "description": "CANOPI Energy Planning Platform - Frontend Application",
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
