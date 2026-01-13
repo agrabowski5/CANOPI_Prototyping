@@ -39,9 +39,24 @@ app.add_middleware(
 async def startup_event():
     """Initialize services on application startup"""
     logger.info("Starting CANOPI Energy Planning Platform API")
+
+    # Initialize grid data service with sample data
+    try:
+        from app.services.grid_data_memory import get_grid_service
+        grid_service = get_grid_service()
+        logger.info(f"✓ Grid service initialized with {len(grid_service.nodes)} nodes and {len(grid_service.branches)} branches")
+
+        if len(grid_service.nodes) == 0:
+            logger.warning("⚠ No grid data loaded - map will be empty")
+            logger.warning("  Run 'python backend/load_sample_data.py' to load sample data")
+        else:
+            logger.info(f"✓ Sample coverage: {len(grid_service.nodes)} substations across North America")
+
+    except Exception as e:
+        logger.error(f"✗ Failed to initialize grid service: {e}")
+
     # TODO: Initialize database connection
     # TODO: Initialize Redis connection
-    # TODO: Load network topology data
 
 
 @app.on_event("shutdown")

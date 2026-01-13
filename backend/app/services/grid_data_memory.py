@@ -183,6 +183,17 @@ def get_grid_service() -> InMemoryGridDataService:
         ]
 
         loaded_count = 0
+
+        # First try to load sample data (from load_sample_data.py)
+        sample_nodes_file = data_dir / "sample_nodes.json"
+        sample_branches_file = data_dir / "sample_branches.json"
+
+        if sample_nodes_file.exists() and sample_branches_file.exists():
+            _grid_service.load_from_files(sample_nodes_file, sample_branches_file)
+            print(f"✓ Loaded sample grid data from CSV conversion")
+            loaded_count += 1
+
+        # Then load interconnection data
         for prefix, name in interconnections:
             nodes_file = data_dir / f"{prefix}_nodes.json"
             branches_file = data_dir / f"{prefix}_branches.json"
