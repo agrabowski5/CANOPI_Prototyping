@@ -1,0 +1,188 @@
+name: Deploy with Tests
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Run tests first
+  run-tests:
+    name: Run All Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm test -- --coverage --watchAll=false --passWithNoTests
+        env:
+          CI: true
+
+      - name: Run backend tests
+        working-directory: backend
+        run: pytest --cov=app -v
+
+      - name: Run API path verification
+        working-directory: frontend
+        run: npm test -- api-paths.test.ts --watchAll=false
+        env:
+          CI: true
+
+      - name: Tests passed
+        run: echo "✅ All tests passed! Proceeding with deployment..."
+
+  # Build frontend for GitHub Pages
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    needs: run-tests  # Only build if tests pass
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --legacy-peer-deps
+
+      - name: Build
+        working-directory: frontend
+        env:
+          REACT_APP_API_BASE_URL: ${{ vars.BACKEND_URL || 'https://canopi-backend.onrender.com' }}
+          REACT_APP_MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
+          CI: false
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/build
+
+  # Deploy frontend to GitHub Pages
+  deploy-frontend:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-frontend  # Only deploy if build succeeds
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Trigger Render deploy via webhook
+  deploy-backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    needs: run-tests  # Only deploy if tests pass
+    steps:
+      - name: Deploy to Render
+        run: |
+          if [ -n "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
+            curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+            echo "Render deploy triggered"
+          else
+            echo "RENDER_DEPLOY_HOOK not set - skipping backend deploy"
+          fi
+
+  # Verify deployment
+  verify-deployment:
+    name: Verify Deployment
+    runs-on: ubuntu-latest
+    needs: deploy-frontend
+    steps:
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Check site is accessible
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://agrabowski5.github.io/CANOPI_Prototyping/)
+          echo "Site returned HTTP $HTTP_CODE"
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            echo "✅ Site is accessible"
+          else
+            echo "⚠️ Site returned $HTTP_CODE (might still be deploying)"
+          fi
+        continue-on-error: true
+
+  # Notify on completion
+  notify:
+    name: Send Notification
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend, deploy-backend, verify-deployment]
+    if: always()
+    steps:
+      - name: SMS Notification
+        run: |
+          if [ "${{ needs.deploy-frontend.result }}" = "success" ]; then
+            MSG="✅ CANOPI deployed! Tests passed. Frontend: https://agrabowski5.github.io/CANOPI_Prototyping"
+          else
+            MSG="❌ CANOPI deploy FAILED. Check: https://github.com/${{ github.repository }}/actions"
+          fi
+          echo -e "Subject: Deploy\n\n$MSG" | \
+          curl -s --url "smtps://smtp.gmail.com:465" \
+            --ssl-reqd \
+            --mail-from "${{ secrets.GMAIL_ADDRESS }}" \
+            --mail-rcpt "7076900273@txt.att.net" \
+            --user "${{ secrets.GMAIL_ADDRESS }}:${{ secrets.GMAIL_APP_PASSWORD }}" \
+            -T -
+        continue-on-error: true
+
+      - name: Create deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests | ${{ needs.run-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend Build | ${{ needs.build-frontend.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend Deploy | ${{ needs.deploy-frontend.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend Deploy | ${{ needs.deploy-backend.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 **Site URL**: https://agrabowski5.github.io/CANOPI_Prototyping" >> $GITHUB_STEP_SUMMARY
