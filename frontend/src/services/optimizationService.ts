@@ -9,7 +9,7 @@ export const optimizationService = {
     project_ids: string[];
   }): Promise<OptimizationJob> {
     try {
-      const response = await apiClient.post<OptimizationJob>('/v1/optimization/jobs', data);
+      const response = await apiClient.post<OptimizationJob>('/api/v1/optimization/jobs', data);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -23,7 +23,7 @@ export const optimizationService = {
     status?: string;
   }): Promise<OptimizationJob[]> {
     try {
-      const response = await apiClient.get<OptimizationJob[]>('/v1/optimization/jobs', {
+      const response = await apiClient.get<OptimizationJob[]>('/api/v1/optimization/jobs', {
         params,
       });
       return response.data;
@@ -35,7 +35,7 @@ export const optimizationService = {
   // Get a single optimization job by ID
   async getOptimizationJob(id: string): Promise<OptimizationJob> {
     try {
-      const response = await apiClient.get<OptimizationJob>(`/v1/optimization/jobs/${id}`);
+      const response = await apiClient.get<OptimizationJob>(`/api/v1/optimization/jobs/${id}`);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -49,7 +49,7 @@ export const optimizationService = {
     message?: string;
   }> {
     try {
-      const response = await apiClient.get(`/v1/optimization/jobs/${id}/status`);
+      const response = await apiClient.get(`/api/v1/optimization/jobs/${id}/status`);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -60,7 +60,7 @@ export const optimizationService = {
   async getJobResults(id: string): Promise<OptimizationResults> {
     try {
       const response = await apiClient.get<OptimizationResults>(
-        `/v1/optimization/jobs/${id}/results`
+        `/api/v1/optimization/jobs/${id}/results`
       );
       return response.data;
     } catch (error) {
@@ -71,7 +71,7 @@ export const optimizationService = {
   // Cancel a running optimization job
   async cancelJob(id: string): Promise<void> {
     try {
-      await apiClient.post(`/v1/optimization/jobs/${id}/cancel`);
+      await apiClient.post(`/api/v1/optimization/jobs/${id}/cancel`);
     } catch (error) {
       throw new Error(handleApiError(error));
     }
@@ -80,7 +80,7 @@ export const optimizationService = {
   // Delete an optimization job
   async deleteJob(id: string): Promise<void> {
     try {
-      await apiClient.delete(`/v1/optimization/jobs/${id}`);
+      await apiClient.delete(`/api/v1/optimization/jobs/${id}`);
     } catch (error) {
       throw new Error(handleApiError(error));
     }
@@ -89,7 +89,7 @@ export const optimizationService = {
   // Run quick optimization (simplified interface)
   async runQuickOptimization(project_ids: string[]): Promise<OptimizationJob> {
     try {
-      const response = await apiClient.post<OptimizationJob>('/v1/optimization/quick', {
+      const response = await apiClient.post<OptimizationJob>('/api/v1/optimization/quick', {
         project_ids,
         mode: 'evaluate',
       });
@@ -102,7 +102,7 @@ export const optimizationService = {
   // Run greenfield optimization - find optimal locations for new projects
   async runGreenfieldOptimization(): Promise<OptimizationJob> {
     try {
-      const response = await apiClient.post<OptimizationJob>('/v1/optimization/quick', {
+      const response = await apiClient.post<OptimizationJob>('/api/v1/optimization/quick', {
         project_ids: [],
         mode: 'greenfield',
       });

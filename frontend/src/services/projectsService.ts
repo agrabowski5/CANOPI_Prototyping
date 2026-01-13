@@ -32,7 +32,7 @@ export const projectsService = {
     type?: string;
   }): Promise<Project[]> {
     try {
-      const response = await apiClient.get<any[]>('/v1/projects/', {
+      const response = await apiClient.get<any[]>('/api/api/v1/projects/', {
         params,
       });
       // Backend returns array directly, transform each project
@@ -45,7 +45,7 @@ export const projectsService = {
   // Get a single project by ID
   async getProject(id: string): Promise<Project> {
     try {
-      const response = await apiClient.get<any>(`/v1/projects/${id}`);
+      const response = await apiClient.get<any>(`/api/v1/projects/${id}`);
       return transformProject(response.data);
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -55,7 +55,7 @@ export const projectsService = {
   // Create a new project
   async createProject(data: CreateProjectRequest): Promise<Project> {
     try {
-      const response = await apiClient.post<any>('/v1/projects/', data);
+      const response = await apiClient.post<any>('/api/v1/projects/', data);
       return transformProject(response.data);
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -65,7 +65,7 @@ export const projectsService = {
   // Update an existing project
   async updateProject(id: string, data: Partial<CreateProjectRequest>): Promise<Project> {
     try {
-      const response = await apiClient.put<any>(`/v1/projects/${id}`, data);
+      const response = await apiClient.put<any>(`/api/v1/projects/${id}`, data);
       return transformProject(response.data);
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -75,7 +75,7 @@ export const projectsService = {
   // Delete a project
   async deleteProject(id: string): Promise<void> {
     try {
-      await apiClient.delete(`/v1/projects/${id}`);
+      await apiClient.delete(`/api/v1/projects/${id}`);
     } catch (error) {
       throw new Error(handleApiError(error));
     }
@@ -88,7 +88,7 @@ export const projectsService = {
     longitude: number
   ): Promise<Project> {
     try {
-      const response = await apiClient.patch<any>(`/v1/projects/${id}/coordinates`, {
+      const response = await apiClient.patch<any>(`/api/v1/projects/${id}/coordinates`, {
         latitude,
         longitude,
       });
@@ -101,7 +101,7 @@ export const projectsService = {
   // Bulk create projects
   async bulkCreateProjects(projects: CreateProjectRequest[]): Promise<Project[]> {
     try {
-      const response = await apiClient.post<any[]>('/v1/projects/bulk', {
+      const response = await apiClient.post<any[]>('/api/v1/projects/bulk', {
         projects,
       });
       return response.data.map(transformProject);

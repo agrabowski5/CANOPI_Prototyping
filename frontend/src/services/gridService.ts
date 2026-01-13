@@ -12,7 +12,7 @@ export const gridService = {
     limit?: number;
   }): Promise<GridTopology> {
     try {
-      const response = await apiClient.get<any>('/v1/grid/topology', {
+      const response = await apiClient.get<any>('/api/v1/grid/topology', {
         params,
       });
 
@@ -50,7 +50,7 @@ export const gridService = {
     voltage_min?: number;
   }): Promise<NetworkNode[]> {
     try {
-      const response = await apiClient.get<NetworkNode[]>('/v1/grid/nodes', {
+      const response = await apiClient.get<NetworkNode[]>('/api/v1/grid/nodes', {
         params,
       });
       return response.data;
@@ -65,7 +65,7 @@ export const gridService = {
     voltage_min?: number;
   }): Promise<TransmissionLine[]> {
     try {
-      const response = await apiClient.get<TransmissionLine[]>('/v1/grid/lines', {
+      const response = await apiClient.get<TransmissionLine[]>('/api/v1/grid/lines', {
         params,
       });
       return response.data;
@@ -77,7 +77,7 @@ export const gridService = {
   // Find nearest substation to a location
   async findNearestSubstation(latitude: number, longitude: number): Promise<NetworkNode> {
     try {
-      const response = await apiClient.get<NetworkNode>('/v1/grid/nearest-substation', {
+      const response = await apiClient.get<NetworkNode>('/api/v1/grid/nearest-substation', {
         params: { latitude, longitude },
       });
       return response.data;
@@ -96,7 +96,7 @@ export const gridService = {
     voltage_kv: number;
   }> {
     try {
-      const response = await apiClient.post('/v1/grid/interconnection-cost', {
+      const response = await apiClient.post('/api/v1/grid/interconnection-cost', {
         project_id: projectId,
         substation_id: substationId,
       });

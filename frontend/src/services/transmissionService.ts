@@ -91,7 +91,7 @@ const transmissionService = {
     if (params.limit !== undefined) queryParams.append('limit', String(params.limit));
 
     const response = await apiClient.get<TransmissionGeoJSON>(
-      `/v1/transmission/lines/geojson?${queryParams.toString()}`
+      `/api/v1/transmission/lines/geojson?${queryParams.toString()}`
     );
     return response.data;
   },
@@ -116,7 +116,7 @@ const transmissionService = {
     if (params.status !== undefined) queryParams.append('status', params.status);
     if (params.limit !== undefined) queryParams.append('limit', String(params.limit));
 
-    const response = await apiClient.get(`/v1/transmission/lines?${queryParams.toString()}`);
+    const response = await apiClient.get(`/api/v1/transmission/lines?${queryParams.toString()}`);
     return response.data;
   },
 
@@ -124,7 +124,7 @@ const transmissionService = {
    * Get transmission statistics
    */
   async getStatistics(): Promise<TransmissionStats> {
-    const response = await apiClient.get<TransmissionStats>('/v1/transmission/stats');
+    const response = await apiClient.get<TransmissionStats>('/api/v1/transmission/stats');
     return response.data;
   },
 
@@ -137,7 +137,7 @@ const transmissionService = {
     lines: TransmissionLine[];
     count: number;
   }> {
-    const response = await apiClient.post('/v1/transmission/nearby', request);
+    const response = await apiClient.post('/api/v1/transmission/nearby', request);
     return response.data;
   },
 
@@ -152,7 +152,7 @@ const transmissionService = {
     }>;
     notes: string[];
   }> {
-    const response = await apiClient.get('/v1/transmission/voltage-classes');
+    const response = await apiClient.get('/api/v1/transmission/voltage-classes');
     return response.data;
   },
 
@@ -173,7 +173,7 @@ const transmissionService = {
     total_lines: number;
     total_length_km: number;
   }> {
-    const response = await apiClient.get('/v1/transmission/coverage');
+    const response = await apiClient.get('/api/v1/transmission/coverage');
     return response.data;
   },
 };
