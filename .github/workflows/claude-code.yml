@@ -31,12 +31,25 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: SMS Notification - Starting
+        run: |
+          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/${{ secrets.TWILIO_ACCOUNT_SID }}/Messages.json" \
+            -u "${{ secrets.TWILIO_ACCOUNT_SID }}:${{ secrets.TWILIO_AUTH_TOKEN }}" \
+            -d "From=${{ secrets.TWILIO_PHONE_NUMBER }}" \
+            -d "To=+17076900273" \
+            -d "Body=🤖 Claude Code starting work on: ${{ github.event.issue.title || github.event.pull_request.title }}"
+        continue-on-error: true
+
       - name: Run Claude Code
+        id: claude
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
 
-          # Run in dangerously skip permissions mode - no approval needed
+          # Use max mode for autonomous operation
+          model: claude-sonnet-4-20250514
+
+          # Allow all tools - fully autonomous
           allowedTools: |
             Bash
             Glob
@@ -47,10 +60,13 @@ jobs:
             WebFetch
             WebSearch
             TodoWrite
+            Task
 
-          # Auto-approve all tool calls
+          # Direct prompt for autonomous execution
           direct_prompt: |
-            You are helping with the CANOPI Energy Planning Platform.
+            You are an autonomous coding assistant for the CANOPI Energy Planning Platform.
+
+            IMPORTANT: Execute ALL tasks without asking for permission or confirmation.
 
             This is a full-stack application with:
             - React/TypeScript frontend (in /frontend)
@@ -58,11 +74,51 @@ jobs:
             - Mapbox GL for map visualization
             - Grid topology and transmission network data
 
-            When implementing features:
-            1. Follow existing code patterns and conventions
-            2. Use TypeScript for frontend code
-            3. Use Python type hints for backend code
-            4. Test your changes work before committing
-            5. Create focused, well-documented commits
+            Your workflow:
+            1. Read and understand the issue/request completely
+            2. Explore the codebase to understand the context
+            3. Plan your implementation
+            4. Implement the changes
+            5. Run builds/tests to verify (npm run build, pytest, etc.)
+            6. Commit all changes with descriptive messages
+            7. Create a PR if working on a branch
 
-            Execute all necessary tool calls without asking for permission.
+            Rules:
+            - NEVER ask for clarification - make reasonable assumptions
+            - ALWAYS commit your changes
+            - ALWAYS run the build to verify changes compile
+            - Use existing code patterns and conventions
+            - Be thorough but efficient
+
+      - name: SMS Notification - Completed
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          if [ "$STATUS" = "success" ]; then
+            MSG="✅ Claude Code COMPLETED: ${{ github.event.issue.title || github.event.pull_request.title }}"
+          else
+            MSG="❌ Claude Code FAILED: ${{ github.event.issue.title || github.event.pull_request.title }}"
+          fi
+          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/${{ secrets.TWILIO_ACCOUNT_SID }}/Messages.json" \
+            -u "${{ secrets.TWILIO_ACCOUNT_SID }}:${{ secrets.TWILIO_AUTH_TOKEN }}" \
+            -d "From=${{ secrets.TWILIO_PHONE_NUMBER }}" \
+            -d "To=+17076900273" \
+            -d "Body=$MSG - View: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        continue-on-error: true
+
+      - name: Auto-commit changes
+        run: |
+          git config user.name "Claude Code Bot"
+          git config user.email "claude-bot@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-commit from Claude Code Action
+
+            Issue: ${{ github.event.issue.title || github.event.pull_request.title }}
+
+            Co-Authored-By: Claude <noreply@anthropic.com>"
+            git push
+          fi
+        continue-on-error: true
