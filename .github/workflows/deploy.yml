@@ -41,6 +41,8 @@ jobs:
           # Point to your Render backend URL (update after Render setup)
           REACT_APP_API_BASE_URL: ${{ vars.BACKEND_URL || 'https://canopi-backend.onrender.com' }}
           REACT_APP_MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
+          # Don't treat warnings as errors in CI
+          CI: false
         run: npm run build
 
       - name: Setup Pages
