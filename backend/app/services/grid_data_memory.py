@@ -168,10 +168,17 @@ def get_grid_service() -> InMemoryGridDataService:
     if _grid_service is None:
         _grid_service = InMemoryGridDataService()
 
-        # In Docker: /app/app/services/grid_data_memory.py
-        # .parent.parent.parent = /app (the working directory)
-        project_root = Path(__file__).parent.parent.parent
+        # Path logic:
+        # __file__ = .../backend/app/services/grid_data_memory.py
+        # .parent = .../backend/app/services
+        # .parent.parent = .../backend/app
+        # .parent.parent.parent = .../backend
+        # .parent.parent.parent.parent = .../CANOPI_Prototyping (project root)
+        backend_dir = Path(__file__).parent.parent.parent
+        project_root = backend_dir.parent  # Go up one more level to project root
         data_dir = project_root / "data_pipelines" / "grid_data"
+
+        print(f"Loading grid data from: {data_dir}")
 
         # Load all available interconnections (US, Canada, Mexico)
         interconnections = [
