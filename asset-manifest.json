@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/CANOPI_Prototyping/static/css/main.6603e227.css",
+    "main.js": "/CANOPI_Prototyping/static/js/main.7811d0df.js",
+    "static/js/488.3e38a626.chunk.js": "/CANOPI_Prototyping/static/js/488.3e38a626.chunk.js",
+    "index.html": "/CANOPI_Prototyping/index.html",
+    "main.6603e227.css.map": "/CANOPI_Prototyping/static/css/main.6603e227.css.map",
+    "main.7811d0df.js.map": "/CANOPI_Prototyping/static/js/main.7811d0df.js.map",
+    "488.3e38a626.chunk.js.map": "/CANOPI_Prototyping/static/js/488.3e38a626.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6603e227.css",
+    "static/js/main.7811d0df.js"
+  ]
+}

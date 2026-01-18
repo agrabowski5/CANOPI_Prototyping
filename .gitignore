@@ -1,0 +1,65 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.prod
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frontend build
+frontend/build/
+frontend/coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# License files (keep private)
+gurobi.lic
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Claude Code
+.claude/
+
+# Large data files (exclude geojson files over 10MB)
+data_pipelines/transmission_data/north_america_full_transmission.geojson
+data_pipelines/transmission_data/transmission_network_full.geojson
+data_pipelines/transmission_data/us_transmission_115_229kv.geojson
+data_pipelines/transmission_data/north_america_transmission.geojson
+data_pipelines/transmission_data/canada_osm_transmission.geojson
+data_pipelines/transmission_data/north_america_transmission_medium_voltage.geojson
+data_pipelines/transmission_data/north_america_transmission_high_voltage.geojson
+data_pipelines/transmission_data/mexico_osm_transmission.geojson
