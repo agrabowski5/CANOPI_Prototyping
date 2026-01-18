@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/CANOPI_Prototyping/static/css/main.6603e227.css",
-    "main.js": "/CANOPI_Prototyping/static/js/main.7811d0df.js",
-    "static/js/488.3e38a626.chunk.js": "/CANOPI_Prototyping/static/js/488.3e38a626.chunk.js",
+    "main.css": "/CANOPI_Prototyping/static/css/main.41e3add0.css",
+    "main.js": "/CANOPI_Prototyping/static/js/main.f19eedbf.js",
+    "static/js/488.6385f967.chunk.js": "/CANOPI_Prototyping/static/js/488.6385f967.chunk.js",
     "index.html": "/CANOPI_Prototyping/index.html",
-    "main.6603e227.css.map": "/CANOPI_Prototyping/static/css/main.6603e227.css.map",
-    "main.7811d0df.js.map": "/CANOPI_Prototyping/static/js/main.7811d0df.js.map",
-    "488.3e38a626.chunk.js.map": "/CANOPI_Prototyping/static/js/488.3e38a626.chunk.js.map"
+    "main.41e3add0.css.map": "/CANOPI_Prototyping/static/css/main.41e3add0.css.map",
+    "main.f19eedbf.js.map": "/CANOPI_Prototyping/static/js/main.f19eedbf.js.map",
+    "488.6385f967.chunk.js.map": "/CANOPI_Prototyping/static/js/488.6385f967.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.6603e227.css",
-    "static/js/main.7811d0df.js"
+    "static/css/main.41e3add0.css",
+    "static/js/main.f19eedbf.js"
   ]
 }
